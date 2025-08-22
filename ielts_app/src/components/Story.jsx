@@ -31,7 +31,7 @@ export default function Story({ onFinish }) {
       <div className="flex items-center gap-6 max-w-4xl">
         {/* Астронавт */}
         <motion.img
-          src="\src\textures\astronaut.png"
+          src="src/textures/astronaut.png"
           alt="Astronaut"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}

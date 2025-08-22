@@ -22,8 +22,11 @@ export default function Cutscene({ onFinish }) {
         ref={videoRef}
         src="/cutscene.mp4" // помести ролик в public/cutscene.mp4
         autoPlay
-        muted={false} // можешь поставить true, если нужно без звука
-        className="w-full h-full object-cover"
+        playsInline // ✅ важно для мобилок (не откроет системный плеер)
+        muted={false}
+        controls={false} // ✅ убираем перемотку/контролы
+        disablePictureInPicture // ✅ отключаем "картинка в картинке"
+        className="w-screen h-screen object-cover"
       />
     </div>
   );
