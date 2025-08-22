@@ -115,9 +115,21 @@ export default function StarBackground({ onSelect }) {
                 textureUrl={planet.texture}
                 size={planet.size}
                 onClick={() => {
-                  if (i === 0) goPrev();
-                  else if (i === 2) goNext();
-                  else onSelect(planet.name);
+                  if (isMobile) {
+                    // --- мобилка ---
+                    if (i === 1) {
+                      // центральная планета
+                      onSelect(planet.name);
+                    } else if (i === 0) {
+                      goPrev();
+                    } else if (i === 2) {
+                      goNext();
+                    }
+                  } else {
+                    // --- десктоп ---
+                    if (i === 0) goPrev();
+                    else if (i === 2) goNext();
+                  }
                 }}
               />
               <PlanetSign text={planet.name} planetSize={planet.size} />
