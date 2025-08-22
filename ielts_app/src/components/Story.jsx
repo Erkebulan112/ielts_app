@@ -20,15 +20,15 @@ export default function Story({ onFinish }) {
   }, [index, onFinish]);
 
   return (
-    <div
-      className="fixed inset-0 flex flex-col items-center justify-center text-white z-50 p-6"
-      style={{
-        backgroundImage: "url('/textures/space_bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="flex items-center gap-6 max-w-4xl">
+    <div className="fixed inset-0 flex flex-col items-center justify-center text-white z-50 p-6">
+      {/* Полноэкранный корабль */}
+      <img
+        src="/space_ship.jpg"
+        alt="Space Ship"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      <div className="flex items-center gap-6 max-w-4xl relative z-10">
         {/* Астронавт */}
         <motion.img
           src="/astronaut.png"
@@ -54,7 +54,7 @@ export default function Story({ onFinish }) {
       {index < dialogues.length && (
         <button
           onClick={() => setIndex(index + 1)}
-          className="mt-10 px-6 py-3 bg-blue-500 rounded-full font-bold hover:bg-blue-400"
+          className="mt-10 px-6 py-3 bg-blue-500 rounded-full font-bold hover:bg-blue-400 relative z-10"
         >
           Next ➡️
         </button>
