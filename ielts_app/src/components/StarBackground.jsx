@@ -1,41 +1,130 @@
-import { Canvas } from "@react-three/fiber";
-import { Stars, OrbitControls } from "@react-three/drei";
-import { MeshStandardMaterial } from "three";
+import React, { useRef, useState } from "react";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Stars, OrbitControls, Text } from "@react-three/drei";
+import { TextureLoader } from "three/src/loaders/TextureLoader";
+import * as THREE from "three";
+import { a, useSprings } from "@react-spring/three";
 
-export default function StarBackground() {
+import earthTexture from "../textures/earth.jpg";
+import marsTexture from "../textures/mars.jpg";
+import jupiterTexture from "../textures/jupiter.jpg";
+import saturnTexture from "../textures/saturn.jpg";
+
+import PlanetSign from "./PlanetSign.jsx";
+
+function Planet({ textureUrl, size, rotationSpeed = 0.01, ...props }) {
+  const texture = useLoader(TextureLoader, textureUrl);
+  const meshRef = useRef();
+  useFrame(() => {
+    if (meshRef.current) meshRef.current.rotation.y += rotationSpeed;
+  });
   return (
-    <Canvas
-      style={{ position: "fixed", top: 0, left: 0, zIndex: -1 }}
-      camera={{ position: [0, 0, 10], fov: 60 }}
-    >
-      {/* Тёмный фон */}
-      <color attach="background" args={["#000000"]} />
+    <mesh ref={meshRef} {...props} cursor="pointer">
+      <sphereGeometry args={[size, 64, 64]} />
+      <meshStandardMaterial map={texture} />
+    </mesh>
+  );
+}
 
-      {/* Звёзды */}
-      <Stars radius={200} depth={100} count={10000} factor={4} fade speed={1} />
+export default function StarBackground({ onSelect }) {
+  const planets = [
+    { name: "Reading", texture: earthTexture, size: 5 },
+    { name: "Listening", texture: marsTexture, size: 5 },
+    { name: "Writing", texture: jupiterTexture, size: 5 },
+    { name: "Speaking", texture: saturnTexture, size: 5 },
+  ];
 
-      {/* Планеты */}
-      <mesh position={[-3, 0, -5]}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial color="#6c5ce7" />
-      </mesh>
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const prevIndex = (currentIndex - 1 + planets.length) % planets.length;
+  const nextIndex = (currentIndex + 1) % planets.length;
 
-      <mesh position={[2, 1, -6]}>
-        <sphereGeometry args={[0.7, 32, 32]} />
-        <meshStandardMaterial color="#fd79a8" />
-      </mesh>
+  const [springs, api] = useSprings(3, (i) => ({
+    position: [i === 0 ? -8 : i === 1 ? 0 : 8, 0, -10],
+    scale: [i === 1 ? 1 : 0.5, i === 1 ? 1 : 0.5, 1],
+    config: { tension: 200, friction: 25 },
+  }));
 
-      <mesh position={[0, -2, -7]}>
-        <sphereGeometry args={[1.2, 32, 32]} />
-        <meshStandardMaterial color="#00b894" />
-      </mesh>
+  const goNext = () => {
+    setCurrentIndex(nextIndex);
+    api.start((i) => ({
+      position: [i === 0 ? -8 : i === 1 ? 0 : 8, 0, -10],
+      scale: [i === 1 ? 1 : 0.5, i === 1 ? 1 : 0.5, 1],
+    }));
+  };
 
-      {/* Освещение */}
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
+  const goPrev = () => {
+    setCurrentIndex(prevIndex);
+    api.start((i) => ({
+      position: [i === 0 ? -8 : i === 1 ? 0 : 8, 0, -10],
+      scale: [i === 1 ? 1 : 0.5, i === 1 ? 1 : 0.5, 1],
+    }));
+  };
 
-      {/* Управление камерой */}
-      <OrbitControls enableZoom={false} />
-    </Canvas>
+  const indices = [prevIndex, currentIndex, nextIndex];
+
+  return (
+    <>
+      <Canvas
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: -1,
+          width: "100%",
+          height: "100%",
+        }}
+        camera={{ position: [0, 0, 20], fov: 50 }}
+        gl={{ antialias: true, outputEncoding: THREE.sRGBEncoding }}
+      >
+        <color attach="background" args={["#000000"]} />
+        <Stars radius={200} depth={100} count={10000} factor={4} fade speed={1} />
+
+        {springs.map((props, i) => {
+          const planet = planets[indices[i]];
+          return (
+            <a.group key={i} position={props.position} scale={props.scale}>
+              <Planet
+                textureUrl={planet.texture}
+                size={planet.size}
+                onClick={() => {
+                  if (i === 0) goPrev();
+                  else if (i === 2) goNext();
+                  else onSelect(planet.name);
+                }}
+              />
+              <PlanetSign text={planet.name} planetSize={planet.size} />
+            </a.group>
+          );
+        })}
+
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+        <OrbitControls enableZoom={false} />
+      </Canvas>
+
+      <div
+        style={{
+          position: "fixed",
+          bottom: 50,
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          gap: "20px",
+        }}
+      >
+        <button
+          onClick={goPrev}
+          className="px-4 py-2 bg-white/20 rounded hover:bg-white/40 transition"
+        >
+          Prev
+        </button>
+        <button
+          onClick={goNext}
+          className="px-4 py-2 bg-white/20 rounded hover:bg-white/40 transition"
+        >
+          Next
+        </button>
+      </div>
+    </>
   );
 }
