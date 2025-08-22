@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { Stars, OrbitControls, Text } from "@react-three/drei";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
@@ -27,7 +27,14 @@ function Planet({ textureUrl, size, rotationSpeed = 0.01, ...props }) {
 }
 
 export default function StarBackground({ onSelect }) {
-  const isMobile = window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const planets = [
     { name: "Reading", texture: earthTexture, size: 5 },
     { name: "Listening", texture: marsTexture, size: 5 },
@@ -96,7 +103,7 @@ export default function StarBackground({ onSelect }) {
         gl={{ antialias: true, outputEncoding: THREE.sRGBEncoding }}
       >
         <color attach="background" args={["#000000"]} />
-        <Stars radius={200} depth={100} count={isMobile ? 5000 : 10000} factor={isMobile ? 3 : 4} fade speed={isMobile ? 0.7 : 1} />
+        <Stars radius={200} depth={100} count={isMobile ? 8000 : 10000} factor={isMobile ? 4 : 4} fade speed={isMobile ? 1 : 1} />
 
         {springs.map((props, i) => {
           const planet = planets[indices[i]];
@@ -131,7 +138,7 @@ export default function StarBackground({ onSelect }) {
           left: 0,
           width: "100%",
           height: "100%",
-          touchAction: "manipulation", // чтобы свайпы работали
+          touchAction: "manipulation", 
         }}
       >
         {!isMobile && (
