@@ -121,35 +121,46 @@ export default function StarBackground({ onSelect }) {
         <OrbitControls enableZoom={!isMobile} />
       </Canvas>
 
-      <div
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      style={{
-      position: "fixed",
-      bottom: isMobile ? 30 : 50,
-      left: "50%",
-      transform: "translateX(-50%)",
-      display: "flex",
-      gap: isMobile ? 12 : 20,
-      touchAction: "manipulation", // <— помогает избежать срабатывания скролла
-      width: "100%",
-      height: "100%",
-      }}
-      >
 
-      <button
-        onClick={goPrev}
-        className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          touchAction: "manipulation", // чтобы свайпы работали
+        }}
       >
-        Prev
-      </button>
-      <button
-        onClick={goNext}
-        className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
-      >
-        Next
-      </button>
-    </div>
+        {!isMobile && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 50,
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: 20,
+            }}
+          >
+            <button
+              onClick={goPrev}
+              className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
+            >
+              Prev
+            </button>
+            <button
+              onClick={goNext}
+              className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+
 
     </>
   );
