@@ -1,13 +1,18 @@
+// App.jsx
 import React, { useState } from "react";
 import StarBackground from "./components/StarBackground.jsx";
 import SectionContent from "./components/SectionContent.jsx";
 import Cutscene from "./components/Cutscene.jsx";
+import Story from "./components/Story.jsx";
 import MiniGame from "./components/MiniGame.jsx";
+import Ending from "./components/Ending.jsx";
 
 export default function App() {
   const [selectedSection, setSelectedSection] = useState(null);
   const [showCutscene, setShowCutscene] = useState(false);
+  const [showStory, setShowStory] = useState(false);
   const [startGame, setStartGame] = useState(false);
+  const [ending, setEnding] = useState(null); // "win" или "lose"
 
   const handlePlanetSelect = (planet) => {
     if (planet === "Game") {
@@ -20,7 +25,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col items-center p-6 overflow-hidden">
       {/* Фон с планетами */}
-      {!showCutscene && !startGame && (
+      {!showCutscene && !showStory && !startGame && !ending && (
         <StarBackground onSelect={handlePlanetSelect} />
       )}
 
@@ -29,30 +34,54 @@ export default function App() {
       </h1>
 
       {/* Контент */}
-      {selectedSection && !showCutscene && !startGame && (
+      {selectedSection && !showCutscene && !showStory && !startGame && !ending && (
         <SectionContent section={selectedSection} />
       )}
 
-      {/* Катсцена */}
-      {showCutscene && !startGame && (
+      {/* Катсцена (видео / злое солнце) */}
+      {showCutscene && (
         <Cutscene
           onFinish={() => {
             setShowCutscene(false);
-            setStartGame(true);
+            setShowStory(true); // после катсцены -> персонаж
+          }}
+        />
+      )}
+
+      {/* История с персонажем */}
+      {showStory && !startGame && (
+        <Story
+          onFinish={() => {
+            setShowStory(false);
+            setStartGame(true); // потом начинается игра
           }}
         />
       )}
 
       {/* Игра */}
-      {startGame && (
-  <MiniGame
-    onExit={() => {
-      setStartGame(false);
-      setSelectedSection(null); // сбросить выбор секции
-    }}
-  />
-  )}
+      {startGame && !ending && (
+        <MiniGame
+          onWin={() => {
+            setStartGame(false);
+            setEnding("win");
+          }}
+          onLose={() => {
+            setStartGame(false);
+            setEnding("lose");
+          }}
+        />
+      )}
 
+      {/* Финал */}
+      {ending && (
+        <Ending
+          result={ending}
+          onExit={() => {
+            setEnding(null);
+            setSelectedSection(null);
+          }}
+        />
+      )}
     </div>
   );
 }

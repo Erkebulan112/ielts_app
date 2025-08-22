@@ -3,72 +3,63 @@ import React, { useState } from "react";
 
 const questions = [
   {
-    q: "Which of the following sentences is grammatically correct?",
-    options: [
-      "She don’t like going out at night.",
-      "She doesn’t likes going out at night.",
-      "She doesn’t like going out at night.",
-      "She not like going out at night."
-    ],
-    answer: 2,
+    q: "Choose the synonym of 'happy':",
+    options: ["Sad", "Joyful", "Angry", "Tired"],
+    answer: "Joyful",
   },
   {
-    q: "Choose the correct form: 'If I ___ more time, I would have finished the essay.'",
-    options: ["have", "had", "would have", "was having"],
-    answer: 1,
+    q: "What is the past tense of 'go'?",
+    options: ["Goed", "Went", "Gone", "Going"],
+    answer: "Went",
   },
   {
-    q: "Identify the error: 'Each of the players have a unique style.'",
-    options: ["Each", "players", "have", "unique"],
-    answer: 2,
+    q: "Fill in the blank: She ____ reading books.",
+    options: ["like", "likes", "liked", "liking"],
+    answer: "likes",
   },
 ];
 
-export default function MiniGame({ onExit }) {
-  const [current, setCurrent] = useState(0);
+export default function MiniGame({ onWin, onLose }) {
+  const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
 
-  const checkAnswer = (index) => {
-    if (index === questions[current].answer) {
-      setScore(score + 1);
+  const handleAnswer = (option) => {
+    if (option === questions[step].answer) {
+      setScore((prev) => prev + 1);
     }
-    if (current + 1 < questions.length) {
-      setCurrent(current + 1);
+
+    if (step + 1 < questions.length) {
+      setStep(step + 1);
     } else {
-      setFinished(true);
+      // игра закончена
+      const passed = score + (option === questions[step].answer ? 1 : 0);
+      if (passed >= Math.ceil(questions.length / 2)) {
+        onWin();
+      } else {
+        onLose();
+      }
     }
   };
 
   return (
-    <div className="flex flex-col items-center text-white">
-      {!finished ? (
-        <>
-          <h2 className="text-2xl font-bold mb-4">{questions[current].q}</h2>
-          <div className="space-y-3">
-            {questions[current].options.map((opt, i) => (
-              <button
-                key={i}
-                onClick={() => checkAnswer(i)}
-                className="px-6 py-2 bg-gray-700 hover:bg-gray-500 rounded-lg"
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-        </>
-      ) : (
-        <>
-          <h2 className="text-3xl font-bold mb-4">Game Over</h2>
-          <p className="mb-6">Your score: {score} / {questions.length}</p>
+    <div className="fixed inset-0 bg-gradient-to-b from-purple-900 via-black to-black text-white flex flex-col items-center justify-center z-50 p-6">
+      <h2 className="text-2xl md:text-4xl font-bold mb-6">
+        {questions[step].q}
+      </h2>
+      <div className="flex flex-col gap-4">
+        {questions[step].options.map((opt, i) => (
           <button
-            onClick={onExit}
-            className="px-8 py-3 bg-red-500 hover:bg-red-400 rounded-lg font-bold"
+            key={i}
+            onClick={() => handleAnswer(opt)}
+            className="px-6 py-3 bg-purple-600 rounded-full hover:bg-purple-500 transition"
           >
-            🔙 Back to Planets
+            {opt}
           </button>
-        </>
-      )}
+        ))}
+      </div>
+      <p className="mt-6 text-lg">
+        Question {step + 1} / {questions.length}
+      </p>
     </div>
   );
 }
