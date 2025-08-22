@@ -5,12 +5,14 @@ import signReading from "../textures/sign_reading.png";
 import signWriting from "../textures/sign_writing.png";
 import signListening from "../textures/sign_listening.png";
 import signSpeaking from "../textures/sign_speaking.png";
+import signGame from "../textures/sign_game.png";
 
 const texturesMap = {
   Reading: signReading,
   Writing: signWriting,
   Listening: signListening,
   Speaking: signSpeaking,
+  Game: signGame,
 };
 
 export default function PlanetSign({ text, planetSize = 5 }) {

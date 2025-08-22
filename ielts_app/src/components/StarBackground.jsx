@@ -9,6 +9,7 @@ import earthTexture from "../textures/earth.jpg";
 import marsTexture from "../textures/mars.jpg";
 import jupiterTexture from "../textures/jupiter.jpg";
 import saturnTexture from "../textures/saturn.jpg";
+import sunTexture from "../textures/sun.jpg";
 
 import PlanetSign from "./PlanetSign.jsx";
 
@@ -40,6 +41,7 @@ export default function StarBackground({ onSelect }) {
     { name: "Listening", texture: marsTexture, size: 5 },
     { name: "Writing", texture: jupiterTexture, size: 5 },
     { name: "Speaking", texture: saturnTexture, size: 5 },
+    { name: "Game", texture: sunTexture, size: 5 },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -142,28 +144,35 @@ export default function StarBackground({ onSelect }) {
         }}
       >
         {!isMobile && (
-          <div
-            style={{
-              position: "absolute",
-              bottom: 50,
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              gap: 20,
-            }}
-          >
-            <button
-              onClick={goPrev}
-              className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
-            >
-              Prev
-            </button>
-            <button
-              onClick={goNext}
-              className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
-            >
-              Next
-            </button>
+  <div
+    style={{
+      position: "absolute",
+      bottom: 50,
+      left: "50%",
+      transform: "translateX(-50%)",
+      display: "flex",
+      gap: 20,
+    }}
+  >
+    <button
+      onClick={goPrev}
+      className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
+    >
+      Prev
+    </button>
+    <button
+      onClick={() => onSelect(planets[currentIndex].name)}
+      className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
+    >
+      Select
+    </button>
+    <button
+      onClick={goNext}
+      className="px-6 py-4 text-lg md:text-xl bg-white/20 rounded-full hover:bg-white/40 transition"
+    >
+      Next
+    </button>
+
           </div>
         )}
       </div>
