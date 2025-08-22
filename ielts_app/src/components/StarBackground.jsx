@@ -82,7 +82,7 @@ export default function StarBackground({ onSelect }) {
         gl={{ antialias: true, outputEncoding: THREE.sRGBEncoding }}
       >
         <color attach="background" args={["#000000"]} />
-        <Stars radius={200} depth={100} count={10000} factor={4} fade speed={1} />
+        <Stars radius={200} depth={100} count={isMobile ? 2000 : 10000} factor={isMobile ? 2 : 4} fade speed={isMobile ? 0.5 : 1} />
 
         {springs.map((props, i) => {
           const planet = planets[indices[i]];
@@ -102,7 +102,7 @@ export default function StarBackground({ onSelect }) {
           );
         })}
 
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.3} />
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <OrbitControls enableZoom={!isMobile} />
       </Canvas>
