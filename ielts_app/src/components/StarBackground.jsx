@@ -65,6 +65,20 @@ export default function StarBackground({ onSelect }) {
     }));
   };
 
+  const touchStart = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStart.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!touchStart.current) return;
+    const deltaX = e.changedTouches[0].clientX - touchStart.current;
+    if (deltaX > 50) goPrev();   // свайп вправо
+    else if (deltaX < -50) goNext(); // свайп влево
+    touchStart.current = null;
+  };
+
   const indices = [prevIndex, currentIndex, nextIndex];
 
   return (
@@ -82,7 +96,7 @@ export default function StarBackground({ onSelect }) {
         gl={{ antialias: true, outputEncoding: THREE.sRGBEncoding }}
       >
         <color attach="background" args={["#000000"]} />
-        <Stars radius={200} depth={100} count={isMobile ? 2000 : 10000} factor={isMobile ? 2 : 4} fade speed={isMobile ? 0.5 : 1} />
+        <Stars radius={200} depth={100} count={isMobile ? 5000 : 10000} factor={isMobile ? 3 : 4} fade speed={isMobile ? 0.7 : 1} />
 
         {springs.map((props, i) => {
           const planet = planets[indices[i]];
@@ -108,6 +122,8 @@ export default function StarBackground({ onSelect }) {
       </Canvas>
 
       <div
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       style={{
       position: "fixed",
       bottom: isMobile ? 30 : 50,
@@ -116,6 +132,8 @@ export default function StarBackground({ onSelect }) {
       display: "flex",
       gap: isMobile ? 12 : 20,
       touchAction: "manipulation", // <— помогает избежать срабатывания скролла
+      width: "100%",
+      height: "100%",
       }}
       >
 
